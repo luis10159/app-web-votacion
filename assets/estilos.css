@@ -1,0 +1,19 @@
+/* * {
+   border: .1px solid red;
+} */
+
+body {
+    font-family: var(--font-family);
+    font-weight: normal;
+    color: var(--text-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+}
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+}

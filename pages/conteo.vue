@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        Facultades
+        Conteo
     </div>
 </template>
 

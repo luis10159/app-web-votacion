@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        Facultades
+        Elecciones
     </div>
 </template>
 

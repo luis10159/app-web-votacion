@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
-    'nuxt-primevue'
+    'nuxt-primevue',
+    '@pinia/nuxt',
   ],
   primevue: {
     usePrimeVue: true,
@@ -20,6 +21,7 @@ export default defineNuxtConfig({
   css: [
     "primevue/resources/themes/lara-light-blue/theme.css",
     "/node_modules/primeflex/primeflex.css",
+    '@/assets/estilos.css'
   ],
 
 })
