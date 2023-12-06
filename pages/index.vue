@@ -7,6 +7,9 @@ const accept = ref(false);
 </script>
 
 <template>
+    <div>
+        Componente de prueba
+    </div>
     <div class="card flex justify-content-center p-fluid">
         <div v-focustrap class="w-full" style="max-width: 20rem">
             <div class="field">
