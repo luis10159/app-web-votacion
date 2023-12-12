@@ -11,6 +11,42 @@ export default {
     return contract.methods.getFaculties().call();
   },
 
+  getCandidaties: () => {
+    return contract.methods.getCandidaties().call();
+  },
+  getElections: () => {
+    return contract.methods.getElections().call();
+  },
+
+  getNumberCandidates: () => {
+    return contract.methods.getNumberCandidates().call();
+  },
+
+  getNumberElections: () => {
+    return contract.methods.getNumberElections().call();
+  },
+
+  getNumberFaculties: () => {
+    return contract.methods.getNumberFaculties().call();
+  },
+
+  getNumberParties: () => {
+    return contract.methods.getNumberParties().call();
+  },
+
+  getOwner: () => {
+    return contract.methods.getOwner().call();
+  },
+
+  getParties: () => {
+    return contract.methods.getParties().call();
+  },
+
+  owner: () => {
+    return contract.methods.owner().call();
+  },
+
+
   addFaculty: async (facultyName) => {
     try {
       // Solicitar al usuario que autorice la conexión a Metamask
@@ -34,5 +70,80 @@ export default {
       throw error; // Puedes manejar el error de acuerdo a tus necesidades
     }
   },
+
+  addCandidate: async (candidateName) => {
+    try {
+      // Solicitar al usuario que autorice la conexión a Metamask
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+  
+      // Obtener la dirección del usuario conectado para poder hacer el envío
+      
+      let accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      console.log(accounts)
+      let sender = accounts[0];
+  
+      // Enviar la transacción desde la cuenta del usuario conectado
+      let result = await contract.methods.addCandidate(candidateName).send({ from: sender });
+  
+      // Puedes manejar el resultado de la transacción aquí, si es necesario
+      console.log('Transacción exitosa:', result);
+  
+      return result;
+    } catch (error) {
+      console.error('Error al agregar candidato:', error);
+      throw error; // Puedes manejar el error de acuerdo a tus necesidades
+    }
+  },
+
+  addElections: async (electionsName,yearElections) => {
+    try {
+      // Solicitar al usuario que autorice la conexión a Metamask
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+  
+      // Obtener la dirección del usuario conectado para poder hacer el envío
+      
+      let accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      console.log(accounts)
+      let sender = accounts[0];
+  
+      // Enviar la transacción desde la cuenta del usuario conectado
+      let result = await contract.methods.addElections(electionsName,yearElections).send({ from: sender });
+  
+      // Puedes manejar el resultado de la transacción aquí, si es necesario
+      console.log('Transacción exitosa:', result);
+  
+      return result;
+    } catch (error) {
+      console.error('Error al agregar Elección:', error);
+      throw error; // Puedes manejar el error de acuerdo a tus necesidades
+    }
+  },
+
+
+  addParty: async (partiesName) => {
+    try {
+      // Solicitar al usuario que autorice la conexión a Metamask
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+  
+      // Obtener la dirección del usuario conectado para poder hacer el envío
+      
+      let accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      console.log(accounts)
+      let sender = accounts[0];
+  
+      // Enviar la transacción desde la cuenta del usuario conectado
+      let result = await contract.methods.addParty(partiesName).send({ from: sender });
+  
+      // Puedes manejar el resultado de la transacción aquí, si es necesario
+      console.log('Transacción exitosa:', result);
+  
+      return result;
+    } catch (error) {
+      console.error('Error al agregar Partido:', error);
+      throw error; // Puedes manejar el error de acuerdo a tus necesidades
+    }
+  },
+
+  
   // Puedes agregar más funciones según tus necesidades
 };
