@@ -195,6 +195,9 @@ export default {
   getParties: () => {
     return contract.methods.getParties().call();
   },
+  getCandidates: () => {
+    return contract.methods.getCandidates().call();
+  },
 
   owner: () => {
     return contract.methods.owner().call();
