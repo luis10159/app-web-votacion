@@ -11,8 +11,8 @@ export default {
     return contract.methods.getFaculties().call();
   },
 
-  getCandidaties: () => {
-    return contract.methods.getCandidaties().call();
+  getCandidates: () => {
+    return contract.methods.getCandidates().call();
   },
   getElections: () => {
     return contract.methods.getElections().call();
@@ -41,13 +41,15 @@ export default {
   getParties: () => {
     return contract.methods.getParties().call();
   },
-
+  getelectionsCandidates:()=>{
+    return contract.methods.getelectionsCandidates().call();
+  },
   owner: () => {
     return contract.methods.owner().call();
   },
 
 
-  addFaculty: async (facultyName) => {
+  addFaculty: async (facultyName,toast) => {
     try {
       // Solicitar al usuario que autorice la conexión a Metamask
       await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -60,18 +62,20 @@ export default {
   
       // Enviar la transacción desde la cuenta del usuario conectado
       let result = await contract.methods.addFaculty(facultyName).send({ from: sender });
-  
+      toast.add({ severity: 'success', summary: 'Creación Exitosa', detail: "La facultad fue creada correctamente", life: 3000 });
       // Puedes manejar el resultado de la transacción aquí, si es necesario
       console.log('Transacción exitosa:', result);
   
       return result;
     } catch (error) {
       console.error('Error al agregar facultad:', error);
+      toast.add({ severity: 'error', summary: 'Aviso de Usuario', detail: "No puedes crear facultades con el mismo nombre ", life: 3000 });
       throw error; // Puedes manejar el error de acuerdo a tus necesidades
+      
     }
   },
 
-  addCandidate: async (candidateName) => {
+  addCandidate: async (candidateName,indexpartido,indexfacultad,toast) => {
     try {
       // Solicitar al usuario que autorice la conexión a Metamask
       await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -83,19 +87,21 @@ export default {
       let sender = accounts[0];
   
       // Enviar la transacción desde la cuenta del usuario conectado
-      let result = await contract.methods.addCandidate(candidateName).send({ from: sender });
+      let result = await contract.methods.addCandidate(candidateName,indexpartido,indexfacultad).send({ from: sender });
   
       // Puedes manejar el resultado de la transacción aquí, si es necesario
       console.log('Transacción exitosa:', result);
+      toast.add({ severity: 'error', summary: 'Creación Exitosa', detail: "El candidato fue asignado ", life: 3000 });
   
       return result;
     } catch (error) {
       console.error('Error al agregar candidato:', error);
+      toast.add({ severity: 'error', summary: 'Aviso de Usuario', detail: "No existe Partrido o Facultad ", life: 3000 });
       throw error; // Puedes manejar el error de acuerdo a tus necesidades
     }
   },
 
-  addElection: async (electionsName,yearElections) => {
+  addElection: async (electionsName,yearElections,toast) => {
     try {
       // Solicitar al usuario que autorice la conexión a Metamask
       await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -111,16 +117,19 @@ export default {
   
       // Puedes manejar el resultado de la transacción aquí, si es necesario
       console.log('Transacción exitosa:', result);
-  
+      toast.add({ severity: 'error', summary: 'Creación exitosa', detail: "La elección fue creada correctamente", life: 3000 });
       return result;
     } catch (error) {
       console.error('Error al agregar Elección:', error);
+      toast.add({ severity: 'error', summary: 'Aviso de Usuario', detail: "La elección ya existe", life: 3000 });
       throw error; // Puedes manejar el error de acuerdo a tus necesidades
     }
   },
 
 
-  addParty: async (partiesName) => {
+ 
+
+  addParty: async (partiesName,toast) => {
     try {
       // Solicitar al usuario que autorice la conexión a Metamask
       await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -133,13 +142,65 @@ export default {
   
       // Enviar la transacción desde la cuenta del usuario conectado
       let result = await contract.methods.addParty(partiesName).send({ from: sender });
-  
+      toast.add({ severity: 'success', summary: 'Creación exitosa', detail: "El partido se creó exitosamente", life: 3000 });
       // Puedes manejar el resultado de la transacción aquí, si es necesario
       console.log('Transacción exitosa:', result);
   
       return result;
     } catch (error) {
       console.error('Error al agregar Partido:', error);
+      toast.add({ severity: 'error', summary: 'Aviso de Usuario', detail: "El partido ya existe", life: 3000 });
+      throw error; // Puedes manejar el error de acuerdo a tus necesidades
+    }
+  },
+
+  addElectionPartyCandidate: async (indexCandidato,indexEleccion,toast) => {
+    try {
+      // Solicitar al usuario que autorice la conexión a Metamask
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+  
+      // Obtener la dirección del usuario conectado para poder hacer el envío
+      
+      let accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      console.log(accounts)
+      let sender = accounts[0];
+  
+      // Enviar la transacción desde la cuenta del usuario conectado
+      let result = await contract.methods.addElectionPartyCandidate(indexCandidato,indexEleccion).send({ from: sender });
+      toast.add({ severity: 'success', summary: 'Creación exitosa', detail: "La asignación creó exitosamente", life: 3000 });
+      // Puedes manejar el resultado de la transacción aquí, si es necesario
+      console.log('Transacción exitosa:', result);
+  
+      return result;
+    } catch (error) {
+      console.error('Error al agregar Partido:', error);
+      toast.add({ severity: 'error', summary: 'Aviso de Usuario', detail: "No existe el candidato o elección", life: 3000 });
+      throw error; // Puedes manejar el error de acuerdo a tus necesidades
+    }
+  },
+
+  Votar: async (indexCandidato,toast) => {
+    try {
+      // Solicitar al usuario que autorice la conexión a Metamask
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+  
+      // Obtener la dirección del usuario conectado para poder hacer el envío
+      
+      let accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      console.log(accounts)
+      let sender = accounts[0];
+  
+      // Enviar la transacción desde la cuenta del usuario conectado
+      let result = await contract.methods.Votante(indexCandidato).send({ from: sender });
+  
+      // Puedes manejar el resultado de la transacción aquí, si es necesario
+      console.log('Transacción exitosa:', result);
+      toast.add({ severity: 'success', summary: 'Votación existosa', detail: 'Su voto fue insertado correctamente', life: 3000 });
+  
+      return result;
+    } catch (error) {
+      console.error('Error al votar:', error);
+      toast.add({ severity: 'error', summary: 'Aviso de Usuario', detail: "El votante ya fue registrado", life: 3000 });
       throw error; // Puedes manejar el error de acuerdo a tus necesidades
     }
   },
