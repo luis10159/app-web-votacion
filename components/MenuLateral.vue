@@ -33,6 +33,13 @@ items.value = [
         }
     },
     {
+        label: 'Asignar Candidato a Elección',
+        icon: 'pi pi-user',
+        command: () => {
+            navigateTo('/candidato-eleccion')
+        }
+    },
+    {
         label: 'Facultades',
         icon: 'pi pi-user',
         command: () => {

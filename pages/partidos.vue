@@ -79,8 +79,8 @@ let saveParty = async () => {
     }
 
     // Llamar a la función addFaculty del servicio Ethereum
-    await ethereumService.addParty(partyName.value);
-
+    await ethereumService.addParty(partyName.value,toast);
+    getParties();
     // Actualizar la lista de facultades después de agregar una nueva
     // Puedes llamar a getFaculties o realizar cualquier acción necesaria
 
@@ -88,6 +88,7 @@ let saveParty = async () => {
     hideDialog();
   } catch (error) {
     console.error('Error al guardar facultad:', error);
+    hideDialog();
     // Puedes manejar el error de acuerdo a tus necesidades
   }
 
@@ -123,7 +124,7 @@ let exportCSV = () => {
             <DataTable ref="dt" :value="parties" v-model:selection="selectedProducts" dataKey="idParty" 
                 :paginator="true" :rows="5" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} facultades">
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} partidos">
                 <template #header>
                     <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
                         <h4 class="m-0">Lista de Partidos</h4>

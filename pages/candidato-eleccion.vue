@@ -7,20 +7,27 @@ import { ref, onMounted } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import { useToast } from 'primevue/usetoast';
 
+let eleccion_candidato = ref([]);
+let candidatos = ref([]);
 let elecciones = ref([]);
-let getElecciones = async () => {
+let getelectionsCandidates = async () => {
   try {
-    let result = await ethereumService.getElections();
-    elecciones.value = result;
-    console.log(elecciones.value);
+    let respuestaelec = await ethereumService.getelectionsCandidates();
+    eleccion_candidato.value = respuestaelec;
+    let result = await ethereumService.getCandidates();
+    candidatos.value = result;
+    let resultelecciones = await ethereumService.getElections();
+    elecciones.value = resultelecciones;
+    
+    console.log(eleccion_candidato.value,candidatos.value,elecciones.value);
   } catch (error) {
-    console.log('Error al obtener Elecciones:', error);
+    console.log('Error al obtener las elecciones y candidatos:', error);
   }
 };
 
 onMounted(() => {
-  // Llama a getparties cuando el componente se carga por primera vez
-  getElecciones();
+  // Llama a getCandidaties cuando el componente se carga por primera vez
+  getelectionsCandidates();
   loadEthereum();
 });
 
@@ -52,8 +59,8 @@ let dt = ref();
 
 let productDialog = ref(false);
 let product = ref({});
-let eleccionName = ref('');
-let eleccionYear = ref('');
+let indexCandidato = ref('');
+let indexEleccion = ref('');
 let selectedProducts = ref();
 let filters = ref({
     'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -71,24 +78,25 @@ let hideDialog = () => {
     productDialog.value = false;
     submitted.value = false;
 };
-let saveElecciones = async () => {
+let saveAsignacion = async () => {
     try {
     submitted.value = true;
 
-    if (!eleccionName.value) {
+    if ( !indexEleccion.value && !indexCandidato.value) {
       return; // Evitar enviar la transacción si falta información
     }
 
     // Llamar a la función addFaculty del servicio Ethereum
-    await ethereumService.addElection(eleccionName.value,eleccionYear.value,toast);
-    getElecciones();
+    console.log(indexCandidato.value,indexEleccion.value,"valore para enviar" )
+    await ethereumService.addElectionPartyCandidate(indexCandidato.value.idCandidate,indexEleccion.value.idElection,toast);
+
     // Actualizar la lista de facultades después de agregar una nueva
     // Puedes llamar a getFaculties o realizar cualquier acción necesaria
-
+    getelectionsCandidates();
     // Cerrar el diálogo después de guardar
     hideDialog();
   } catch (error) {
-    console.error('Error al guardar Elección:', error);
+    console.error('Error al guardar el candidato:', error);
     hideDialog();
     // Puedes manejar el error de acuerdo a tus necesidades
   }
@@ -122,13 +130,13 @@ let exportCSV = () => {
                 </template>
             </Toolbar>
 
-            <DataTable ref="dt" :value="elecciones" v-model:selection="selectedProducts" dataKey="idElection" 
+            <DataTable ref="dt" :value="eleccion_candidato" v-model:selection="selectedProducts" dataKey="idFaculty" 
                 :paginator="true" :rows="5" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} facultades">
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} asignaciones">
                 <template #header>
                     <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
-                        <h4 class="m-0">Lista de Elecciones</h4>
+                        <h4 class="m-0">Asignación de candidatos con elecciones</h4>
 						<span class="p-input-icon-left">
                             <i class="pi pi-search" />
                             <InputText v-model="filters['global'].value" placeholder="Search..." />
@@ -137,10 +145,10 @@ let exportCSV = () => {
                 </template>
 
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column field="idElection" header="Código" sortable style="min-width:12rem"></Column>
-                <Column field="name" header="Nombre del partido" sortable style="min-width:16rem"></Column>
-                <Column field="year" header="Año" sortable style="min-width:16rem"></Column>
-               
+                <Column field="idElectionPartyCandidate" header="Código" sortable style="min-width:12rem"></Column>
+                <Column field="candidate.name" header="Nombre del Candidato" sortable style="min-width:16rem"></Column>
+                <Column field="election.name" header="Nombre de la elección" sortable style="min-width:16rem"></Column>
+                
                 
             </DataTable>
         </div>
@@ -148,22 +156,27 @@ let exportCSV = () => {
         <Dialog v-model:visible="productDialog" :style="{width: '450px'}" header="Nueva" :modal="true" class="p-fluid">
             
             <div class="field">
-                <label for="name">Ingrese Nueva Elección</label>
-                <InputText id="name" v-model.trim="eleccionName" required="true" autofocus :class="{'p-invalid': submitted && !eleccionName}" />
-                <small class="p-error" v-if="submitted && !eleccionName">Nombre es requerido</small>
-
-                <label for="name" class="mt-4">Años de la Elección</label>
-                <InputNumber id="year" v-model.trim="eleccionYear" required="true" 
-                autofocus :class="{'p-invalid': submitted && !eleccionYear}" 
-                />
-                <small class="p-error" v-if="submitted && !eleccionYear">Año es requerido</small>
+                <div >
+                  <label for="name" >Ingrese el Candidato</label>
+                  <div class="card flex justify-content-center">
+                      <Dropdown v-model="indexCandidato" :options="candidatos" showClear optionLabel="name" placeholder="Seleccionar Candidato" class="w-full md:w-14rem" />
+                  </div>
+                  <small class="p-error " v-if="submitted && !indexCandidato">Candidato es requerido</small>
+                </div>
+                <div class="mt-4">
+                  <label for="name" class="mt-4">Ingrese la Elección</label>
+                  <div class="card flex justify-content-center">
+                      <Dropdown v-model="indexEleccion" :options="elecciones" showClear optionLabel="name" placeholder="Seleccionar Elección" class="w-full md:w-14rem" />
+                  </div>
+                  <small class="p-error" v-if="submitted && !indexEleccion">Elección es requerido</small>
+                </div>
             </div>
             
 
            
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" text @click="hideDialog"/>
-                <Button label="Save" icon="pi pi-check" text @click="saveElecciones" />
+                <Button label="Save" icon="pi pi-check" text @click="saveAsignacion" />
             </template>
         </Dialog>
 

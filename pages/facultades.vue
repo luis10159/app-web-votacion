@@ -94,8 +94,8 @@ let saveFacultad = async () => {
     }
 
     // Llamar a la función addFaculty del servicio Ethereum
-    await ethereumService.addFaculty(facultyName.value);
-
+    await ethereumService.addFaculty(facultyName.value,toast);
+    getFaculties();
     // Actualizar la lista de facultades después de agregar una nueva
     // Puedes llamar a getFaculties o realizar cualquier acción necesaria
 
@@ -103,6 +103,7 @@ let saveFacultad = async () => {
     hideDialog();
   } catch (error) {
     console.error('Error al guardar facultad:', error);
+    hideDialog();
     // Puedes manejar el error de acuerdo a tus necesidades
   }
 
