@@ -8,7 +8,7 @@ import Web3 from 'web3';
     window.ethereum.enable(); // Request account access
     } else {
     // Fallback to a local Ethereum provider
-    const provider = new Web3.providers.HttpProvider('https://sepolia.etherscan.io/tx/0x567D4753AB661405C2abc75393C52644ea5F5Cc9');
+    const provider = new Web3.providers.HttpProvider('https://sepolia.etherscan.io/address/0xD3D80F30E0007D9359Bc5349f73B1F4e5D90F013');
     web3 = new Web3(provider);
     }
 
