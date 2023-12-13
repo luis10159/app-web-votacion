@@ -87,8 +87,8 @@ let saveFacultad = async () => {
     }
 
     // Llamar a la función addFaculty del servicio Ethereum
-    await ethereumService.addFaculty(facultyName.value);
-
+    await ethereumService.addFaculty(facultyName.value, toast);
+    getFaculties();
     // Actualizar la lista de facultades después de agregar una nueva
     // Puedes llamar a getFaculties o realizar cualquier acción necesaria
 
@@ -96,6 +96,7 @@ let saveFacultad = async () => {
     hideDialog();
   } catch (error) {
     console.error("Error al guardar facultad:", error);
+    hideDialog();
     // Puedes manejar el error de acuerdo a tus necesidades
   }
 };
@@ -187,21 +188,20 @@ let exportCSV = () => {
         :modal="true"
         class="p-fluid"
       >
-        <div class="formgrid grid">
-          <div class="field">
-            <label for="name">Ingrese Nueva Facultad</label>
-            <InputText
-              id="name"
-              v-model.trim="facultyName"
-              required="true"
-              autofocus
-              :class="{ 'p-invalid': submitted && !facultyName }"
-            />
-            <small class="p-error" v-if="submitted && !facultyName"
-              >Nombre es requerido</small
-            >
-          </div>
+        <div class="field">
+          <label for="name">Ingrese Nueva Facultad</label>
+          <InputText
+            id="name"
+            v-model.trim="facultyName"
+            required="true"
+            autofocus
+            :class="{ 'p-invalid': submitted && !facultyName }"
+          />
+          <small class="p-error" v-if="submitted && !facultyName"
+            >Nombre es requerido</small
+          >
         </div>
+
         <template #footer>
           <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
           <Button label="Save" icon="pi pi-check" text @click="saveFacultad" />
