@@ -78,7 +78,7 @@ let hideDialog = () => {
     productDialog.value = false;
     submitted.value = false;
 };
-let saveFacultad = async () => {
+let saveCandidato = async () => {
     try {
     submitted.value = true;
 
@@ -169,7 +169,7 @@ let exportCSV = () => {
                     <small class="p-error mb-2" v-if="submitted && !indexFacultad">Facultad es requerido</small>
                 </div>
                 <div class="mt-4">
-                    <label for="name" >Ingrese Nueva Facultad</label>
+                    <label for="name" >Ingrese Nuevo Partido</label>
                     <div class="card flex justify-content-center">
                         <Dropdown v-model="indexPartido" :options="partidos" showClear optionLabel="name" placeholder="Seleccionar Partido" class="w-full md:w-14rem" />
                     </div>
@@ -181,7 +181,7 @@ let exportCSV = () => {
            
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" text @click="hideDialog"/>
-                <Button label="Save" icon="pi pi-check" text @click="saveFacultad" />
+                <Button label="Save" icon="pi pi-check" text @click="saveCandidato" />
             </template>
         </Dialog>
 
