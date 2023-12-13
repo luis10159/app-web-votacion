@@ -152,7 +152,7 @@ let exportCSV = () => {
                 <InputText id="name" v-model.trim="eleccionName" required="true" autofocus :class="{'p-invalid': submitted && !eleccionName}" />
                 <small class="p-error" v-if="submitted && !eleccionName">Nombre es requerido</small>
 
-                <label for="name" class="mt-4">Años de la Elección</label>
+                <label for="name" class="mt-4">Año de la Elección</label>
                 <InputNumber id="year" v-model.trim="eleccionYear" required="true" 
                 autofocus :class="{'p-invalid': submitted && !eleccionYear}" 
                 />
