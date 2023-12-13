@@ -1,11 +1,30 @@
 // services/ethereum.js
 import { web3 } from "@/store/web3";
 
-let contractAddress = "0x27ECf36dfc07b4308243B553A2F26bDa45F1422B";
+let contractAddress = "0x075CFf6493DEFcE30Ffeb1fD2003778683c11005";
 let contractABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
-    inputs: [{ internalType: "uint32", name: "index", type: "uint32" }],
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "votante",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "indiceCandidato",
+        type: "uint256",
+      },
+    ],
+    name: "VotoRegistrado",
+    type: "event",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "index", type: "uint256" }],
     name: "Votante",
     outputs: [],
     stateMutability: "nonpayable",
@@ -14,8 +33,8 @@ let contractABI = [
   {
     inputs: [
       { internalType: "string", name: "name", type: "string" },
-      { internalType: "uint32", name: "indexParty", type: "uint32" },
-      { internalType: "uint32", name: "indexFaculty", type: "uint32" },
+      { internalType: "uint256", name: "indexParty", type: "uint256" },
+      { internalType: "uint256", name: "indexFaculty", type: "uint256" },
     ],
     name: "addCandidate",
     outputs: [],
@@ -62,8 +81,9 @@ let contractABI = [
     outputs: [
       {
         components: [
-          { internalType: "string", name: "name", type: "string" },
           { internalType: "uint256", name: "idCandidate", type: "uint256" },
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "uint256", name: "votesCount", type: "uint256" },
           {
             components: [
               { internalType: "uint256", name: "idParty", type: "uint256" },
@@ -82,7 +102,6 @@ let contractABI = [
             name: "faculty",
             type: "tuple",
           },
-          { internalType: "uint256", name: "votesCount", type: "uint256" },
         ],
         internalType: "struct Vote.InfoCandidate[]",
         name: "",
@@ -181,26 +200,6 @@ let contractABI = [
   },
   {
     inputs: [],
-    name: "getVoto_x_Candidato",
-    outputs: [
-      {
-        components: [
-          { internalType: "uint256", name: "idCandidate", type: "uint256" },
-          { internalType: "string", name: "name", type: "string" },
-          { internalType: "uint256", name: "votesCount", type: "uint256" },
-          { internalType: "uint256", name: "idParty", type: "uint256" },
-          { internalType: "uint256", name: "idFaculty", type: "uint256" },
-        ],
-        internalType: "struct Vote.Candidate[]",
-        name: "",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "getelectionsCandidates",
     outputs: [
       {
@@ -212,11 +211,7 @@ let contractABI = [
           },
           {
             components: [
-              {
-                internalType: "uint256",
-                name: "idElection",
-                type: "uint256",
-              },
+              { internalType: "uint256", name: "idElection", type: "uint256" },
               { internalType: "string", name: "name", type: "string" },
               { internalType: "uint256", name: "year", type: "uint256" },
             ],
@@ -226,19 +221,12 @@ let contractABI = [
           },
           {
             components: [
+              { internalType: "uint256", name: "idCandidate", type: "uint256" },
               { internalType: "string", name: "name", type: "string" },
-              {
-                internalType: "uint256",
-                name: "idCandidate",
-                type: "uint256",
-              },
+              { internalType: "uint256", name: "votesCount", type: "uint256" },
               {
                 components: [
-                  {
-                    internalType: "uint256",
-                    name: "idParty",
-                    type: "uint256",
-                  },
+                  { internalType: "uint256", name: "idParty", type: "uint256" },
                   { internalType: "string", name: "name", type: "string" },
                 ],
                 internalType: "struct Vote.Party",
@@ -257,11 +245,6 @@ let contractABI = [
                 internalType: "struct Vote.Faculty",
                 name: "faculty",
                 type: "tuple",
-              },
-              {
-                internalType: "uint256",
-                name: "votesCount",
-                type: "uint256",
               },
             ],
             internalType: "struct Vote.InfoCandidate",

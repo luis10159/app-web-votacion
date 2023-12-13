@@ -60,6 +60,13 @@ items.value = [
       navigateTo("/votar");
     },
   },
+  {
+    label: "Asignar Candidato a Elección",
+    icon: "pi pi-user",
+    command: () => {
+      navigateTo("/candidato-eleccion");
+    },
+  },
 ];
 
 const collapseAll = () => {
