@@ -372,7 +372,7 @@ export default {
       // Puedes manejar el resultado de la transacción aquí, si es necesario
       console.log("Transacción exitosa:", result);
       toast.add({
-        severity: "error",
+        severity: "success",
         summary: "Creación Exitosa",
         detail: "El candidato fue asignado ",
         life: 3000,
