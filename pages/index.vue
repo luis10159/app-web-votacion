@@ -1,9 +1,35 @@
 <script setup>
+import { ref, onMounted } from "vue";
+import ethereumService from "~/services/ethereum";
+let walletId = ref("");
+let checkWalletConectada = ref(false);
 definePageMeta({
   layout: false,
 });
+async function loadEthereum() {
+  try {
+    if (window.ethereum) {
+      console.log("Ethereum está presente");
+      // Solicitar al usuario que autorice la conexión a Metamask
+      let r = await window.ethereum.request({ method: "eth_requestAccounts" });
+      walletId.value = r[0];
 
-const conectar = () => {
+      localStorage.setItem("walletId", walletId.value);
+      console.log("Cuenta Ethereum conectada exitosamente");
+      // Ahora puedes realizar operaciones que requieren la billetera
+    } else {
+      console.log("No tiene instalado Ethereum");
+      // Puedes mostrar un mensaje al usuario o redirigirlo a la página de instalación de Metamask
+    }
+  } catch (error) {
+    console.error("Error al cargar Ethereum:", error);
+    // Puedes manejar el error de acuerdo a tus necesidades
+  }
+}
+onMounted(() => {
+  loadEthereum();
+});
+const conectar = async () => {
   navigateTo("/inicio");
 };
 </script>
@@ -35,7 +61,7 @@ const conectar = () => {
         <h1>Elecciones con Blockchain</h1>
       </div>
       <div class="block font-bold text-center p-0 border-round mb-3">
-        <span class="text-gray-600 text-2xl">Peak Interactive</span>
+        <span class="text-gray-600 text-2xl">Click !</span>
       </div>
       <div class="block font-bold text-center p-0 border-round mb-3">
         <span class="text-gray-600 text-2xl">

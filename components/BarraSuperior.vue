@@ -1,6 +1,8 @@
 <script setup>
-import { ref } from "vue";
-
+import { ref, onMounted } from "vue";
+import ethereumService from "~/services/ethereum";
+let walletId = ref("");
+let checkWalletConectada = ref(false);
 const expandNode = (node) => {
   if (node.items && node.items.length) {
     expandedKeys.value[node.key] = true;
@@ -10,14 +12,38 @@ const expandNode = (node) => {
     }
   }
 };
+onMounted(() => {
+  loadEthereum();
+  walletId.value = localStorage.getItem("walletId");
+});
 const menu = ref();
 const items2 = ref([{ separator: true }, { separator: true }]);
 
 const toggle = (event) => {
   menu.value.toggle(event);
 };
+async function loadEthereum() {
+  try {
+    if (window.ethereum) {
+      console.log("Ethereum está presente");
+      // Solicitar al usuario que autorice la conexión a Metamask
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      console.log("Cuenta Ethereum conectada exitosamente");
+      // Ahora puedes realizar operaciones que requieren la billetera
+    } else {
+      console.log("No tiene instalado Ethereum");
+      // Puedes mostrar un mensaje al usuario o redirigirlo a la página de instalación de Metamask
+    }
+  } catch (error) {
+    console.error("Error al cargar Ethereum:", error);
+    // Puedes manejar el error de acuerdo a tus necesidades
+  }
+  //obtner localstorage de la wallet
+}
 
-const CerrarSesion = () => {
+const CerrarSesion = async () => {
+  localStorage.removeItem("walletId");
+  walletId.value = "";
   navigateTo("/");
 };
 </script>
@@ -26,6 +52,7 @@ const CerrarSesion = () => {
   <Menubar>
     <template #end>
       <div class="flex align-items-center gap-2">
+        {{ walletId }}
         <Avatar
           image="/unsm.png"
           class="mr-2 puntero"
