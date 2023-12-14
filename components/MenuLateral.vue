@@ -1,9 +1,9 @@
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, onMounted } from "vue";
 import { useRoute } from "vue-router";
 const route = useRoute();
 const currentPath = ref("");
-
+import ethereumService from "~/services/ethereum";
 watchEffect(() => {
   currentPath.value = route.path;
 });

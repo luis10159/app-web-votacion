@@ -1,6 +1,6 @@
 // services/ethereum.js
 import { web3 } from "@/store/web3";
-let contractAddress = "0x075CFf6493DEFcE30Ffeb1fD2003778683c11005";
+let contractAddress = "0x7F146d30E96102dbBF9408482a5CF5A8Bb58C5d7";
 let contractABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
@@ -540,5 +540,14 @@ export default {
     }
   },
 
+  checkSiWalletConectada: async () => {
+    try {
+      if (!this.ethereum) return alert("No se detectó MetaMask");
+      const accounts = await this.ethereum.request({ method: "eth_accounts" });
+      return accounts;
+    } catch (error) {
+      throw new Error("No se pudo conectar a la wallet");
+    }
+  },
   // Puedes agregar más funciones según tus necesidades
 };
