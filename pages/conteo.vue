@@ -1,53 +1,112 @@
+<script setup>
+
+import ethereumService from '~/services/ethereum';
+import { ref, onMounted } from 'vue';
+import { ethers } from 'ethers';
+
+
+let listaconteo = ref([]);
+let totalVotos = ref(0);
+let porcentajesVotos = ref([]);
+
+let getConteo = async () => {
+    try {
+    let result = await ethereumService.getelectionsCandidates();
+    listaconteo.value = result;
+    console.log(listaconteo.value,listaconteo.value,"lista");
+
+   
+
+        listaconteo.value.forEach(e => {
+          // Convierte el valor a cadena y elimina la "n" al final
+          let votesCountString = e.candidate.votesCount.toString();
+          let votesCountWithoutN = votesCountString.replace('n', '');
+
+          // Convierte la cadena resultante a un número
+          let numericVotesCount = parseInt(votesCountWithoutN);
+
+            
+          // Suma el valor numérico al totalVotos
+          totalVotos.value += numericVotesCount;
+
+          console.log(numericVotesCount,"cada voto"); // Esto imprimirá el valor numérico sin "n"
+        });
+        console.log(totalVotos.value,"total");
+        
+        
+        // Calcula la suma de votos al recibir los datos
+        listaconteo.value.forEach(e => {
+          // Convierte el valor a cadena y elimina la "n" al final
+          let votesCountString = e.candidate.votesCount.toString();
+          let votesCountWithoutN = votesCountString.replace('n', '');
+
+          // Convierte la cadena resultante a un número
+          let numericVotesCount = parseInt(votesCountWithoutN);
+
+          porcentajesVotos.value.push({
+            porcentaje:(numericVotesCount/totalVotos.value)*100,
+            nombre:e.candidate.name,
+            eleccion:e.election.name
+          })
+          // Suma el valor numérico al totalVotos
+          //totalVotos.value += numericVotesCount;
+
+          
+        });
+        console.log(porcentajesVotos.value,"porcentajes");
+
+    
+    // console.log(totalVotos.value, "Total de votos");
+    } catch (error) {
+    console.log('Error al obtener listaconteo:', error);
+    }
+};
+
+
+onMounted(() => {
+  // Llama a getFaculties cuando el componente se carga por primera vez
+  getConteo();
+  loadEthereum();
+//   listaconteo.value.forEach(e => {
+//     totalVotos+=listaconteo.value.candidates.votesCount
+//     console.log(totalVotos,"cantidad")
+//   });
+});
+
+
+async function loadEthereum() {
+  try {
+    if (window.ethereum) {
+      console.log("Ethereum está presente");
+      // Solicitar al usuario que autorice la conexión a Metamask
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      console.log("Cuenta Ethereum conectada exitosamente");
+      // Ahora puedes realizar operaciones que requieren la billetera
+    } else {
+      console.log("No tiene instalado Ethereum");
+      // Puedes mostrar un mensaje al usuario o redirigirlo a la página de instalación de Metamask
+    }
+  } catch (error) {
+    console.error('Error al cargar Ethereum:', error);
+    // Puedes manejar el error de acuerdo a tus necesidades
+  }
+}
+//const value = ref(60);
+
+</script>
 
 <template>
-    <div class="card flex justify-content-center">
-        <form @submit="onSubmit" class="flex flex-column gap-2">
-            <div>Please choose your ingredient.</div>
-            <div class="flex flex-wrap gap-3">
-                <div class="flex align-items-center">
-                    <RadioButton v-model="value" inputId="ingredient1" name="pizza2" value="Cheese" />
-                    <label for="ingredient1" class="ml-2">Cheese</label>
-                </div>
-                <div class="flex align-items-center">
-                    <RadioButton v-model="value" inputId="ingredient2" name="pizza2" value="Mushroom" />
-                    <label for="ingredient2" class="ml-2">Mushroom</label>
-                </div>
-                <div class="flex align-items-center">
-                    <RadioButton v-model="value" inputId="ingredient3" name="pizza2" value="Pepper" />
-                    <label for="ingredient3" class="ml-2">Pepper</label>
-                </div>
-                <div class="flex align-items-center">
-                    <RadioButton v-model="value" inputId="ingredient4" name="pizza2" value="Onion" />
-                    <label for="ingredient4" class="ml-2">Onion</label>
-                </div>
-            </div>
-
-            <small id="text-error" class="p-error">{{ errorMessage || '&nbsp;' }}</small>
-            <Button type="submit" label="Submit" />
-        </form>
-    </div>
+        <div v-for="lista in porcentajesVotos" :key="lista.nombre" class="flex align-items-center">
+          <!-- <RadioButton v-model="selectedCandidate" :inputId="candidato.idCandidate" name="dynamic" :value="candidato" />
+          <label :for="candidato.idCandidate" class="ml-2">{{ candidato.name }}</label> -->
+          <Knob v-model="lista.porcentaje" :valueTemplate="`${lista.porcentaje}%`"/>
+          <span>{{ lista.nombre }}</span>
+        </div>
+    <!-- <div>
+        <Knob v-model="value" valueTemplate="{value}%" />
+    </div> -->
 </template>
 
-<script setup>
-import { useToast } from 'primevue/usetoast';
-import { useField, useForm } from 'vee-validate';
+<style scoped>
 
-const { handleSubmit, resetForm } = useForm();
-const { value, errorMessage } = useField('value', validateField);
-const toast = useToast();
-
-function validateField(value) {
-    if (!value) {
-        return 'Value is required.';
-    }
-
-    return true;
-}
-
-const onSubmit = handleSubmit((values) => {
-    if (values.value && values.value.length > 0) {
-        toast.add({ severity: 'info', summary: 'Form Submitted', detail: values.value, life: 3000 });
-        resetForm();
-    }
-});
-</script>
+</style>
