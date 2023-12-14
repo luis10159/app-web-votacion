@@ -6,7 +6,6 @@ const currentPath = ref("");
 
 watchEffect(() => {
   currentPath.value = route.path;
-  console.log("Current Path:", currentPath.value);
 });
 const expandedKeys = ref({});
 const items = ref();

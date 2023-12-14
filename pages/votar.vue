@@ -1,12 +1,13 @@
 <template>
-  <div class="card flex justify-content-center">
+  <Loading v-if="mostrar == false" />
+  <div class="card flex justify-content-center ma">
     <form @submit="onSubmit" class="flex flex-column gap-2">
-      <div>Seleccione un candidato</div>
+      <h2>Seleccione un candidato</h2>
       <div class="flex gap-3">
         <div
           v-for="candidato in candidatos"
           :key="candidato.idCandidate"
-          class="flex align-items-center"
+          class="flex align-items-center justify-content-center"
         >
           <RadioButton
             v-model="selectedCandidate"
@@ -29,6 +30,7 @@
 </template>
 
 <script setup>
+let mostrar = ref(true);
 import { ref } from "vue";
 import ethereumService from "~/services/ethereum";
 import { useToast } from "primevue/usetoast";
@@ -45,10 +47,13 @@ let candidatos = ref([]);
 
 async function getCandidates() {
   try {
+    mostrar.value = false;
     let result = await ethereumService.getCandidates();
     candidatos.value = result;
     console.log(candidatos.value);
+    mostrar.value = true;
   } catch (error) {
+    mostrar.value = true;
     console.log("Error al obtener candidatos:", error);
   }
 }
@@ -69,11 +74,32 @@ function validateField(value) {
 const onSubmit = handleSubmit(async () => {
   if (selectedCandidate.value && selectedCandidate.value.name) {
     // Tu lógica para manejar el envío del formulario
-    console.log("Candidato seleccionado:", selectedCandidate.value);
-    // await ethereumService(candidatoName.value, indexPartido.value.idParty, indexFacultad.value.idFaculty);
-    await ethereumService.Votar(selectedCandidate.value.idCandidate, toast);
+    try {
+      mostrar.value = false;
+      console.log("Candidato seleccionado:", selectedCandidate.value);
+      // await ethereumService(candidatoName.value, indexPartido.value.idParty, indexFacultad.value.idFaculty);
+      let r = await ethereumService.Votar(
+        selectedCandidate.value.idCandidate,
+        toast
+      );
+      if (r) {
+        mostrar.value = true;
+      }
+      resetForm();
+    } catch (error) {
+      mostrar.value = true;
+      resetForm();
+    }
     //toast.add({ severity: 'success', summary: 'Votación Enviada', detail: 'Candidato seleccionado: ' + selectedCandidate.value.name, life: 3000 });
-    resetForm();
   }
 });
 </script>
+<style scoped>
+.ma {
+  position: relative;
+  top: 50%;
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+}
+</style>
