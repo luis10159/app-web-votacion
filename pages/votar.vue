@@ -59,7 +59,7 @@ onMounted(() => {
 });
 
 function validateField(value) {
-  if (!value || !value.idCandidate) {
+  if (!value || !value.name) {
     return "Seleccione al menos un candidato.";
   }
 
@@ -67,7 +67,7 @@ function validateField(value) {
 }
 
 const onSubmit = handleSubmit(async () => {
-  if (selectedCandidate.value && selectedCandidate.value.idCandidate) {
+  if (selectedCandidate.value && selectedCandidate.value.name) {
     // Tu lógica para manejar el envío del formulario
     console.log("Candidato seleccionado:", selectedCandidate.value);
     // await ethereumService(candidatoName.value, indexPartido.value.idParty, indexFacultad.value.idFaculty);

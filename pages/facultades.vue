@@ -3,14 +3,17 @@ import ethereumService from "~/services/ethereum";
 import { ref, onMounted } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useToast } from "primevue/usetoast";
-
+let mostrar = ref(true);
 let faculties = ref([]);
 let getFaculties = async () => {
+  mostrar.value = false;
   try {
     let result = await ethereumService.getFaculties();
     faculties.value = result;
+    mostrar.value = true;
     console.log(faculties.value);
   } catch (error) {
+    mostrar.value = true;
     console.log("Error al obtener facultades:", error);
   }
 };
@@ -85,16 +88,24 @@ let saveFacultad = async () => {
     if (!facultyName.value) {
       return; // Evitar enviar la transacción si falta información
     }
-
+    mostrar.value = false;
+    productDialog.value = false;
     // Llamar a la función addFaculty del servicio Ethereum
-    await ethereumService.addFaculty(facultyName.value, toast);
+    let r = await ethereumService.addFaculty(facultyName.value, toast);
+
+    hideDialog();
+    if (r) {
+      mostrar.value = true;
+    }
+
+    // Actualizar la lista de facultades después de agregar una nueva
     getFaculties();
     // Actualizar la lista de facultades después de agregar una nueva
     // Puedes llamar a getFaculties o realizar cualquier acción necesaria
 
     // Cerrar el diálogo después de guardar
-    hideDialog();
   } catch (error) {
+    mostrar.value = true;
     console.error("Error al guardar facultad:", error);
     hideDialog();
     // Puedes manejar el error de acuerdo a tus necesidades
@@ -108,8 +119,7 @@ let exportCSV = () => {
 
 <template>
   <div>
-    <!-- <Button @click="loadEthereum" label="Conectar con METAMASK"/> -->
-
+    <Loading v-if="mostrar == false" />
     <div>
       <div class="card">
         <Toolbar class="mb-4">
@@ -144,7 +154,7 @@ let exportCSV = () => {
           :filters="filters"
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
           :rowsPerPageOptions="[5, 10, 25]"
-          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} facultades"
+          currentPageReportTemplate="Se encontraron {first} de {last} Total {totalRecords} Registros"
         >
           <template #header>
             <div
@@ -155,7 +165,7 @@ let exportCSV = () => {
                 <i class="pi pi-search" />
                 <InputText
                   v-model="filters['global'].value"
-                  placeholder="Search..."
+                  placeholder="Buscar..."
                 />
               </span>
             </div>
@@ -184,7 +194,7 @@ let exportCSV = () => {
       <Dialog
         v-model:visible="productDialog"
         :style="{ width: '450px' }"
-        header="Nueva"
+        header="Registrar nueva Facultad"
         :modal="true"
         class="p-fluid"
       >
@@ -203,8 +213,19 @@ let exportCSV = () => {
         </div>
 
         <template #footer>
-          <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
-          <Button label="Save" icon="pi pi-check" text @click="saveFacultad" />
+          <Button
+            label="Cancel"
+            icon="pi pi-trash"
+            severity="danger"
+            @click="hideDialog"
+          >
+          </Button>
+          <Button
+            label="Save"
+            severity="success"
+            icon="pi pi-save"
+            @click="saveFacultad"
+          ></Button>
         </template>
       </Dialog>
     </div>

@@ -1,13 +1,7 @@
-
 import { defineNuxtPlugin } from "#app";
 import PrimeVue from "primevue/config";
-import 'primeicons/primeicons.css';
-
+import "primeicons/primeicons.css";
 
 export default defineNuxtPlugin((nuxtApp) => {
-    
-    
-    nuxtApp.vueApp.use(PrimeVue, {
-
-    });
+  nuxtApp.vueApp.use(PrimeVue, {});
 });

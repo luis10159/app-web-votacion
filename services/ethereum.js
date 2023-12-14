@@ -1,6 +1,5 @@
 // services/ethereum.js
 import { web3 } from "@/store/web3";
-
 let contractAddress = "0x075CFf6493DEFcE30Ffeb1fD2003778683c11005";
 let contractABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
@@ -309,6 +308,9 @@ export default {
   },
   getelectionsCandidates: () => {
     return contract.methods.getelectionsCandidates().call();
+  },
+  getVoto_x_Candidato: () => {
+    return contract.methods.getVoto_x_Candidato().call();
   },
   owner: () => {
     return contract.methods.owner().call();

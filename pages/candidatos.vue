@@ -3,11 +3,12 @@ import ethereumService from "~/services/ethereum";
 import { ref, onMounted } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import { useToast } from "primevue/usetoast";
-
+let mostrar = ref(true);
 let candidatos = ref([]);
 let facultades = ref([]);
 let partidos = ref([]);
 let getCandidates = async () => {
+  mostrar.value = false;
   try {
     let result = await ethereumService.getCandidates();
     candidatos.value = result;
@@ -16,7 +17,9 @@ let getCandidates = async () => {
     let resultpartidos = await ethereumService.getParties();
     partidos.value = resultpartidos;
     console.log(candidatos.value, facultades.value, partidos.value);
+    mostrar.value = true;
   } catch (error) {
+    mostrar.value = true;
     console.log("Error al obtener candidatos:", error);
   }
 };
@@ -68,14 +71,15 @@ let hideDialog = () => {
   productDialog.value = false;
   submitted.value = false;
 };
-let saveFacultad = async () => {
+let saveCandidato = async () => {
   try {
     submitted.value = true;
 
     if (!candidatoName.value && !indexPartido.value && !indexFacultad.value) {
       return; // Evitar enviar la transacción si falta información
     }
-
+    mostrar.value = false;
+    productDialog.value = false;
     // Llamar a la función addFaculty del servicio Ethereum
     console.log(
       candidatoName.value,
@@ -83,19 +87,22 @@ let saveFacultad = async () => {
       indexFacultad.value,
       "valore para enviar"
     );
-    await ethereumService.addCandidate(
+    let r = await ethereumService.addCandidate(
       candidatoName.value,
       indexPartido.value.idParty,
       indexFacultad.value.idFaculty,
       toast
     );
-
+    hideDialog();
+    if (r) {
+      mostrar.value = true;
+    }
     // Actualizar la lista de facultades después de agregar una nueva
     // Puedes llamar a getFaculties o realizar cualquier acción necesaria
     getCandidates();
     // Cerrar el diálogo después de guardar
-    hideDialog();
   } catch (error) {
+    mostrar.value = true;
     console.error("Error al guardar el candidato:", error);
     hideDialog();
     // Puedes manejar el error de acuerdo a tus necesidades
@@ -109,7 +116,7 @@ let exportCSV = () => {
 
 <template>
   <div>
-    <!-- <Button @click="loadEthereum" label="Conectar con METAMASK"/> -->
+    <Loading v-if="mostrar == false" />
 
     <div>
       <div class="card">
@@ -156,7 +163,7 @@ let exportCSV = () => {
                 <i class="pi pi-search" />
                 <InputText
                   v-model="filters['global'].value"
-                  placeholder="Search..."
+                  placeholder="Buscar..."
                 />
               </span>
             </div>
@@ -197,7 +204,7 @@ let exportCSV = () => {
       <Dialog
         v-model:visible="productDialog"
         :style="{ width: '450px' }"
-        header="Nueva"
+        header="Registrar Nuevo Candidato"
         :modal="true"
         class="p-fluid"
       >
@@ -232,7 +239,7 @@ let exportCSV = () => {
             >
           </div>
           <div class="mt-4">
-            <label for="name">Ingrese Nueva Facultad</label>
+            <label for="name">Ingrese Nuevo Partido</label>
             <div class="card flex justify-content-center">
               <Dropdown
                 v-model="indexPartido"
@@ -250,8 +257,19 @@ let exportCSV = () => {
         </div>
 
         <template #footer>
-          <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
-          <Button label="Save" icon="pi pi-check" text @click="saveFacultad" />
+          <Button
+            label="Cancel"
+            icon="pi pi-trash"
+            severity="danger"
+            @click="hideDialog"
+          >
+          </Button>
+          <Button
+            label="Save"
+            severity="success"
+            icon="pi pi-save"
+            @click="saveCandidato"
+          ></Button>
         </template>
       </Dialog>
     </div>

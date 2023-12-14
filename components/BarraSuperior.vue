@@ -17,7 +17,7 @@ const toggle = (event) => {
   menu.value.toggle(event);
 };
 
-const CerrarSesión = async () => {
+const CerrarSesion = () => {
   navigateTo("/");
 };
 </script>
@@ -49,17 +49,17 @@ const CerrarSesión = async () => {
           </template>
           <template #item="{ item, label, props }">
             <a class="flex" v-bind="props.action">
-              <span v-bind="props.icon" />
+              <span v-bind="props.icon"></span>
               <span v-bind="props.label">{{ label }}</span>
               <Badge v-if="item.badge" class="ml-auto" :value="item.badge" />
             </a>
           </template>
           <template #end>
             <button
-              @click="CerrarSesión;"
+              @click="CerrarSesion"
               class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround"
             >
-              <i class="pi pi-sign-out" />
+              <i class="pi pi-sign-out"></i>
               <span class="ml-2">Salir</span>
             </button>
           </template>

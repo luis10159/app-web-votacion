@@ -1,6 +1,13 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
+const currentPath = ref("");
 
+watchEffect(() => {
+  currentPath.value = route.path;
+  console.log("Current Path:", currentPath.value);
+});
 const expandedKeys = ref({});
 const items = ref();
 items.value = [
@@ -11,16 +18,10 @@ items.value = [
       navigateTo("/inicio");
     },
   },
-  {
-    label: "Votantes",
-    icon: "pi pi-user",
-    command: () => {
-      navigateTo("/votantes");
-    },
-  },
+
   {
     label: "Candidatos",
-    icon: "pi pi-user",
+    icon: "pi pi-users",
     command: () => {
       navigateTo("/candidatos");
     },
@@ -96,18 +97,21 @@ const expandNode = (node) => {
     <template #item="{ item }">
       <router-link
         v-if="item.route"
-        v-slot="{ href, navigate }"
+        v-slot="{ href, navigateTo }"
         :to="item.route"
+        @click="navigateTo"
+        :class="{
+          active: currentPath === item.route.path,
+        }"
         custom
       >
         <a
           v-ripple
           class="flex align-items-center cursor-pointer text-color px-3 py-2"
           :href="href"
-          @click="navigate"
         >
-          <span :class="item.icon" />
-          <span class="ml-2 text-color">{{ item.label }}</span>
+          <span :class="item.icon"></span>
+          <span>{{ item.label }}</span>
         </a>
       </router-link>
       <a
@@ -117,15 +121,18 @@ const expandNode = (node) => {
         :href="item.url"
         :target="item.target"
       >
-        <span :class="[item.icon, 'text-blue-700']" />
+        <span :class="[item.icon, 'text-blue-700']"></span>
         <span class="ml-2">{{ item.label }}</span>
-        <span
-          v-if="item.items"
-          class="pi pi-angle-down text-blue-700 ml-auto"
-        />
+        <span v-if="item.items" class="pi pi-angle-down text-blue-700 ml-auto">
+        </span>
       </a>
     </template>
   </PanelMenu>
 </template>
 
-<style scoped></style>
+<style scoped>
+.active {
+  background-color: red;
+  color: white;
+}
+</style>
